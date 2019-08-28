@@ -2,9 +2,7 @@ import xml.etree.ElementTree as ET
 import os
 
 
-#132            54372       2514        140
-
-tree = ET.parse('metadata_google_v5.xml')
+tree = ET.parse('C:/Users/Alex/Desktop/Ugiat/groundtruth/groundtruth/autocatalogador/prueba/metadata.xml')
 root = tree.getroot()  
 shots = []
 
@@ -14,29 +12,26 @@ for shot in root.iter('Shot'):
         framelista.append(int(frame.findall('Info')[2].attrib['value']))
     shots.append(framelista)
 
-
-
-pos = 2514
-N = 140
+N = 26
 vector_buenos = []
 for shot in shots:
     for (i, line) in enumerate(shot):
-        # if len(shot) == i+1 :
-        #     vector_buenos.append(line)
-        #     continue
-        # if i == 0:
-        #     pos = line
-        #     vector_buenos.append(line)
-        #     continue
+        if len(shot) == i+1 :
+            vector_buenos.append(line)
+            continue
+        if i == 0:
+            pos = line
+            vector_buenos.append(line)
+            continue
         if line >= pos + N:
             pos = line
             vector_buenos.append(line)
             continue
 vector_buenos[len(vector_buenos) - 1] = vector_buenos[len(vector_buenos) - 1] - 2
-x = 0
-
+count = 0
 for frame in root.iter('KeyFrame'):
-    if int(frame.findall('Info')[2].attrib['value']) == vector_buenos[x]:
+
+    if int(frame.findall('Info')[2].attrib['value']) == vector_buenos[count]:
         captions = False
         faces = False
         for x in frame.iter('Captions'):
@@ -47,7 +42,6 @@ for frame in root.iter('KeyFrame'):
             y= ET.tostring(y,encoding="unicode")
             if y != '<Faces />\n':
                 faces = True
-
 
         output = open("frame" + str(frame.findall('Info')[2].attrib['value']).zfill(6) + ".txt", "w")
 
@@ -83,4 +77,6 @@ for frame in root.iter('KeyFrame'):
                     output.write('1')
                     output.write('\n')
         output.close()
-        x += 1
+        count += 1
+        if count == 2812:
+            break

@@ -127,55 +127,74 @@ if __name__ == '__main__':
     scenes = get_scenes(root)
     scene_0 = scenes[0]
     score_vector = []
+    key_frame_count=0
+    shot_count = 0
+    scene_count = 0
 
     # We iterate over KeyFrames comparing them
-    for shot, shot_ref in zip(scene_0[:1], scene_0_ref[:1]):
-        key_frame_ref_iter = iter(shot_ref[0])
-        key_frame_ref = next(key_frame_ref_iter)
-        for key_frame in shot[0]:
+    for scene, scene_ref in zip(scenes,scenes_ref):
+        scene_count += 1
+        for shot, shot_ref in zip(scene, scene_ref[:]):
+            shot_count += 1
+            key_frame_ref_iter = iter(shot_ref[0][:])
             try:
-                if key_frame.findall('Info')[2].attrib['value'] == key_frame_ref.findall('Info')[2].attrib['value']:
-                    # KeyFrame information
-                    info_key_frame_id, info_file_name, info_frame_position = get_key_frame_information(key_frame)
-                    info_key_frame_id_ref, info_file_name_ref, info_frame_position_ref = get_key_frame_information(key_frame_ref)
-
-                    # Descriptors
-                    objects, places, faces, captions, aesthetics = get_descriptors(key_frame)
-                    objects_ref, places_ref, faces_ref, captions_ref, aesthetics_ref = get_descriptors(key_frame_ref)
-
-
-                    # Compare captions
-                    n_captions = captions[0][0].attrib['value']
-                    string = captions[1][0].attrib['string']
-                    string = string.lower()
-                    data = re.findall(r"[\w']+", string)
-
-                    n_captions_ref = captions_ref[0][0].attrib['value']
-                    string_ref = captions_ref[1][0].attrib['string']
-                    string_ref = string_ref.lower()
-                    data_ref = re.findall(r"[\w']+", string_ref)
-
-                    n_common_words = 0
-                    for word in data:
-                        if word in data_ref:
-                            n_common_words += 1
-                            idx = []
-                            idx.append(data_ref.index(word))
-                            i = idx[0]
-                            del data_ref.remove(i)
-
-
-                    score = n_common_words / len(data_ref)
-                    score_vector.append(score)
-
-                    print('Number of captions KeyFrame %s: %s' % (info_frame_position.attrib['value'], n_captions))
-                    print('Content:\n%s' % data)
-                    print('Ref:\n%s' % data_ref)
-                    print('Score:\n%s' % score)
-                    key_frame_ref = next(key_frame_ref_iter)
-
+                key_frame_ref = next(key_frame_ref_iter)
             except StopIteration:
-                break
+                continue
+            for key_frame in shot[0]:
+                try:
+                    if key_frame.findall('Info')[2].attrib['value'] == key_frame_ref.findall('Info')[2].attrib['value']:
+                        key_frame_count +=1
+                        # KeyFrame information
+                        info_key_frame_id, info_file_name, info_frame_position = get_key_frame_information(key_frame)
+                        info_key_frame_id_ref, info_file_name_ref, info_frame_position_ref = get_key_frame_information(key_frame_ref)
+
+                        # Descriptors
+                        objects, places, faces, captions, aesthetics = get_descriptors(key_frame)
+                        objects_ref, places_ref, faces_ref, captions_ref, aesthetics_ref = get_descriptors(key_frame_ref)
+
+
+                        # Compare captions
+                        n_captions = captions[0][0].attrib['value']
+                        if n_captions != '0':
+                            string = captions[1][0].attrib['string']
+                        elif n_captions == '0':
+                            continue
+                        string = string.lower()
+                        data = re.findall(r"[\w']+", string)
+
+                        n_captions_ref = captions_ref[0][0].attrib['value']
+                        string_ref = captions_ref[1][0].attrib['string']
+                        string_ref = string_ref.lower()
+                        data_ref = re.findall(r"[\w']+", string_ref)
+
+                        n_common_words = 0
+                        data_or = data_ref[:]
+
+                        for word in data:
+                            if word in data_ref:
+                                n_common_words += 1
+                                idx = []
+                                idx.append(data_ref.index(word))
+                                i = idx[0]
+                                del data_ref[i]
+
+
+                        score = n_common_words / len(data_or)
+                        score_vector.append(score)
+
+                        print('Number of captions KeyFrame %s: %s' % (info_frame_position.attrib['value'], n_captions))
+                        print('Content:\n%s' % data)
+                        print('Ref:\n%s' % data_or)
+                        print('Score:\n%s' % score)
+                        key_frame_ref = next(key_frame_ref_iter)
+
+
+                except StopIteration:
+                    continue
+
+
+
     score_total = 0
     for score in score_vector:
         score_total = score + score_total
@@ -185,3 +204,6 @@ if __name__ == '__main__':
     
     minpos = score_vector.index(min(score_vector))
     print(minpos)  
+    print(f'el numero de frames en cuenta es {key_frame_count}')
+    print(f'el numero de shots es {shot_count}')
+    print(f'el numero de scenes es {scene_count}')

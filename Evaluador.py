@@ -130,6 +130,8 @@ if __name__ == '__main__':
     key_frame_count=0
     shot_count = 0
     scene_count = 0
+    matched_count = 0
+    good_words_count = 0
 
     # We iterate over KeyFrames comparing them
     for scene, scene_ref in zip(scenes,scenes_ref):
@@ -170,6 +172,7 @@ if __name__ == '__main__':
 
                         n_common_words = 0
                         data_or = data_ref[:]
+                        good_words_count = good_words_count + len(data_ref)
 
                         for word in data:
                             if word in data_ref:
@@ -178,6 +181,7 @@ if __name__ == '__main__':
                                 idx.append(data_ref.index(word))
                                 i = idx[0]
                                 del data_ref[i]
+                                matched_count = matched_count + 1
 
 
                         score = n_common_words / len(data_or)
@@ -207,3 +211,5 @@ if __name__ == '__main__':
     print(f'el numero de frames en cuenta es {key_frame_count}')
     print(f'el numero de shots es {shot_count}')
     print(f'el numero de scenes es {scene_count}')
+    ratio_por_palabras = matched_count/good_words_count
+    print(f'el porcentaje de acierto por palabras es {ratio_por_palabras}')

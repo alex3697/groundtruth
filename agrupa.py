@@ -1,7 +1,7 @@
 import glob
 import xml.etree.ElementTree as ET
 
-txts = glob.glob('C:/Users/Alex/Desktop/Ugiat/groundtruth/groundtruth/autocatalogador/Data/*.txt')
+txts = glob.glob('C:/Users/Alex/Desktop/Ugiat/groundtruth/TV3/Data/*.txt')
 vector_buenos = []
 for txt in txts:
    f = open(txt,"r")
@@ -11,8 +11,8 @@ for txt in txts:
 x = 0
 
 # Save XML
-f = open('C:/Users/Alex/Desktop/Ugiat/groundtruth/groundtruth/autocatalogador/prueba/metadata.xml','w')
-tree = ET.parse('C:/Users/Alex/Desktop/Ugiat/groundtruth/groundtruth/autocatalogador/prueba/metadata_google_v5.xml')
+f = open('C:/Users/Alex/Desktop/Ugiat/groundtruth/TV3/metadata_corregido.xml','w')
+tree = ET.parse('C:/Users/Alex/Desktop/Ugiat/groundtruth/TV3/metadata.xml')
 root = tree.getroot()  
 f.write('<?xml version="1.0" encoding="utf-8"?>\n')
 f.write('<VideoDescription>\n')
@@ -73,7 +73,7 @@ for scene in root[-1][0]:
                f.write('" />')
                f.write('\n')
                f.write('\t\t\t\t\t\t\t<ImageDescriptors>\n')
-               with open('C:/Users/Alex/Desktop/Ugiat/groundtruth/groundtruth/autocatalogador/Data/frame'+keyframe.findall('Info')[2].attrib['value'].zfill(6)+'.txt','r') as datos:
+               with open('C:/Users/Alex/Desktop/Ugiat/groundtruth/TV3/Data/frame'+keyframe.findall('Info')[2].attrib['value'].zfill(6)+'.txt','r') as datos:
                   captions = 0
                   captionList = []
                   for (i, line) in enumerate(datos):

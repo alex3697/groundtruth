@@ -1,7 +1,7 @@
 import glob
 import xml.etree.ElementTree as ET
 
-txts = glob.glob('C:/Users/Alex/Desktop/Ugiat/groundtruth/TV3/Data/*.txt')
+txts = glob.glob('C:/Users/Alex/Desktop/Ugiat/groundtruth/groundtruth/autocatalogador/Data/*.txt')
 vector_buenos = []
 for txt in txts:
    f = open(txt,"r")
@@ -11,10 +11,10 @@ for txt in txts:
 x = 0
 
 # Save XML
-f = open('C:/Users/Alex/Desktop/Ugiat/groundtruth/TV3/metadata_corregido.xml','w')
-tree = ET.parse('C:/Users/Alex/Desktop/Ugiat/groundtruth/TV3/metadata.xml')
+f = open('C:/Users/Alex/Desktop/Ugiat/groundtruth/groundtruth/autocatalogador/prueba/metadata.xml','w')
+tree = ET.parse('C:/Users/Alex/Desktop/Ugiat/groundtruth/groundtruth/autocatalogador/prueba/metadata_google_v5.xml')
 root = tree.getroot()  
-f.write('<?xml version="1.0" encoding="utf-8"?>\n')
+#f.write('<?xml version="1.0" encoding="utf-8"?>\n')
 f.write('<VideoDescription>\n')
 f.write('\t')
 f.write(ET.tostring(root[0],encoding='unicode'))
@@ -73,7 +73,7 @@ for scene in root[-1][0]:
                f.write('" />')
                f.write('\n')
                f.write('\t\t\t\t\t\t\t<ImageDescriptors>\n')
-               with open('C:/Users/Alex/Desktop/Ugiat/groundtruth/TV3/Data/frame'+keyframe.findall('Info')[2].attrib['value'].zfill(6)+'.txt','r') as datos:
+               with open('C:/Users/Alex/Desktop/Ugiat/groundtruth/groundtruth/autocatalogador/Data/frame'+keyframe.findall('Info')[2].attrib['value'].zfill(6)+'.txt','r') as datos:
                   captions = 0
                   captionList = []
                   for (i, line) in enumerate(datos):
@@ -83,13 +83,25 @@ for scene in root[-1][0]:
                     if tmp[5] == '0':
                        captions += 1
                        captionList.append(tmp[:-1])
-
+               #f.write(f'\t\t\t\t\t\t\t\t<ObjectsDescripor>\n')
+               f.write(f'\t\t\t\t\t\t\t\t')
+               f.write(ET.tostring(keyframe[3][0],encoding='unicode'))
+               #f.write(f'\t\t\t\t\t\t\t\t</ObjectsDescripor>\n')
+               #f.write(f'\t\t\t\t\t\t\t\t<PlacesDescripor>\n')
+               f.write(ET.tostring(keyframe[3][1],encoding='unicode'))
+               #f.write(f'\t\t\t\t\t\t\t\t</PlacesDescripor>\n')
+               #f.write(f'\t\t\t\t\t\t\t\t<FaceDescripor>\n')
+               f.write(ET.tostring(keyframe[3][2],encoding='unicode'))
+               #f.write(f'\t\t\t\t\t\t\t\t</FaceDescripor>\n')
+               f.write(f'<CaptionsDescripor>\n')
+               f.write('\t\t\t\t\t\t\t\t\t<CaptionsInformation><Info name="NumberOfCaptions" value="')
                if captions != 0:
-                  f.write(f'\t\t\t\t\t\t\t\t<CaptionsDescripor>\n')
-                  f.write('\t\t\t\t\t\t\t\t\t<CaptionsInformation><Info name="NumberOfCaptions" value="')
                   f.write(str(captions + 1))
-                  f.write('" />')
-                  f.write('</CaptionsInformation>')
+               elif captions == 0:
+                  f.write(str(captions))
+               f.write('" />')
+               f.write('</CaptionsInformation>')
+               if captions != 0:
                   f.write('<Captions>')
                   id = 1
                   f.write('<caption id="')
@@ -113,9 +125,13 @@ for scene in root[-1][0]:
                      f.write(str(capt[0]) + '" />')
                      id +=1
                   f.write('</Captions>\n')
-                  f.write(f'\t\t\t\t\t\t\t\t</CaptionsDescripor>\n')
-                  f.write('\t\t\t\t\t\t\t</ImageDescriptors>\n')
-                  f.write('\t\t\t\t\t\t</KeyFrame>\n')
+               f.write(f'\t\t\t\t\t\t\t\t</CaptionsDescripor>\n')
+               #f.write(f'\t\t\t\t\t\t\t\t<AestheticsDescriptor>\n')
+               f.write(f'\t\t\t\t\t\t\t\t')
+               f.write(ET.tostring(keyframe[3][4],encoding='unicode'))
+               #f.write(f'\t\t\t\t\t\t\t\t</AestheticsDescriptor>\n')
+               f.write('</ImageDescriptors>\n')
+               f.write('\t\t\t\t\t\t</KeyFrame>\n')
                x += 1
          f.write('\t\t\t\t\t</KeyFrameDecomposition>\n')
       f.write(f'\t\t\t\t</Shot>\n')

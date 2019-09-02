@@ -103,7 +103,7 @@ if __name__ == '__main__':
 
     # Load reference
     metadata_name_ref = 'metadata.xml'
-    folder_path = 'C:\\Users\\Alex\\Desktop\\Ugiat\\groundtruth\\groundtruth\\autocatalogador\\prueba\\'
+    folder_path = 'C:/Users/Alex/Desktop/Ugiat/groundtruth/groundtruth/autocatalogador/prueba/'
 
     xml_file_name_ref = folder_path + metadata_name_ref
 
@@ -116,7 +116,7 @@ if __name__ == '__main__':
 
     # Load model
     metadata_name = 'metadata_google_v5.xml'
-    folder_path = 'C:\\Users\\Alex\\Desktop\\Ugiat\\groundtruth\\groundtruth\\autocatalogador\\prueba\\'
+    folder_path = 'C:/Users/Alex/Desktop/Ugiat/groundtruth/groundtruth/autocatalogador/prueba/'
 
     xml_file_name = folder_path + metadata_name
 
@@ -158,9 +158,14 @@ if __name__ == '__main__':
 
                         # Compare captions
                         n_captions = captions[0][0].attrib['value']
-                        if n_captions != '0':
+                        n_captions_ref = captions_ref[0][0].attrib['value']
+                        if n_captions_ref != '0':
+                            if n_captions == '0':
+                                good_words_count = good_words_count + int(captions_ref[0][0].attrib['value'])
+                                continue
                             string = captions[1][0].attrib['string']
-                        elif n_captions == '0':
+                                
+                        elif n_captions_ref == '0':
                             continue
                         string = string.lower()
                         data = re.findall(r"[\w']+", string)
